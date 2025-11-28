@@ -41,7 +41,7 @@ async function run() {
 
         app.get('/cars/:id', async (req, res) => {
             const id = req.params.id
-            const query = { _id: new ObjectId(id) }
+            const query = {$or: [{ _id: new ObjectId(id) }, { _id: id }]}
             const result = await carsCollection.findOne(query)
             res.send(result)
         })
@@ -90,14 +90,14 @@ async function run() {
         app.post('/users', async (req, res) => {
             const newUser = req.body
             const email = req.body.email
-            const query = {email:email}
+            const query = { email: email }
             const existingUser = await usersCollection.findOne(query)
-            if(existingUser){
-                res.send({message:'already added this user in database'})
+            if (existingUser) {
+                res.send({ message: 'already added this user in database' })
             }
             else {
-            const result = await usersCollection.insertOne(newUser)
-            res.send(result)
+                const result = await usersCollection.insertOne(newUser)
+                res.send(result)
             }
         })
 
