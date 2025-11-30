@@ -31,17 +31,23 @@ async function run() {
         const carsCollection = dataBase.collection('cars')
         const newCarCollection = dataBase.collection('newCars')
         const usersCollection = dataBase.collection('users')
+        const bookCollection = dataBase.collection('books')
 
-        // all cars api
+        // all cars api & individual api by email
         app.get('/cars', async (req, res) => {
-            const cursor = carsCollection.find()
+            const providerEmail = req.query.providerEmail
+            let query = {}
+            if (providerEmail) {
+                query = { providerEmail: providerEmail }
+            }
+            const cursor = carsCollection.find(query)
             const result = await cursor.toArray()
             res.send(result)
         })
 
         app.get('/cars/:id', async (req, res) => {
             const id = req.params.id
-            const query = {$or: [{ _id: new ObjectId(id) }, { _id: id }]}
+            const query = { $or: [{ _id: new ObjectId(id) }, { _id: id }] }
             const result = await carsCollection.findOne(query)
             res.send(result)
         })
@@ -52,6 +58,26 @@ async function run() {
             res.send(result)
         })
 
+        // booking api
+        app.post('/books', async (req, res) => {
+            const newBook = req.body
+            const result = await bookCollection.insertOne(newBook)
+            res.send(result)
+        })
+
+        app.get('/books', async (req, res) => {
+            const email = req.query.email
+            let query = {}
+            if (email) {
+                query = { email: email }
+            }
+            const cursor = bookCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+
+        // update car information
         app.patch('/cars/:id', async (req, res) => {
             const id = req.params.id
             const updatedCar = req.body
