@@ -58,13 +58,26 @@ async function run() {
             res.send(result)
         })
 
-        // booking api
-        app.post('/books', async (req, res) => {
-            const newBook = req.body
-            const result = await bookCollection.insertOne(newBook)
+        app.delete('/cars/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { $or: [{ _id: new ObjectId(id) }, { _id: id }] }
+            const result = await carsCollection.deleteOne(query)
             res.send(result)
         })
 
+        app.patch('/cars/:id', async (req, res) => {
+            const id = req.params.id
+            const updatedCar = req.body
+            const query = { $or: [{ _id: new ObjectId(id) }, { _id: id }] }
+            const update = {
+                $set: updatedCar
+            }
+            const result = await carsCollection.updateOne(query, update)
+            res.send(result)
+        })
+
+
+        // booking api
         app.get('/books', async (req, res) => {
             const email = req.query.email
             let query = {}
@@ -76,26 +89,16 @@ async function run() {
             res.send(result)
         })
 
-
-        // update car information
-        app.patch('/cars/:id', async (req, res) => {
-            const id = req.params.id
-            const updatedCar = req.body
-            const query = { _id: new ObjectId(id) }
-            const update = {
-                $set: {
-                    car: updatedCar.car,
-                    price: updatedCar.price
-                }
-            }
-            const result = await carsCollection.updateOne(query, update)
+        app.post('/books', async (req, res) => {
+            const newBook = req.body
+            const result = await bookCollection.insertOne(newBook)
             res.send(result)
         })
 
-        app.delete('/cars/:id', async (req, res) => {
+        app.delete('/books/:id', async (req, res) => {
             const id = req.params.id
-            const query = { _id: new ObjectId(id) }
-            const result = await carsCollection.deleteOne(query)
+            const query = { $or: [{ _id: new ObjectId(id) }, { _id: id }] }
+            const result = await bookCollection.deleteOne(query)
             res.send(result)
         })
 
