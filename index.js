@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 
 async function run() {
     try {
-        await client.connect()
+        // await client.connect()
 
         const dataBase = client.db('rentWheels_db')
         const carsCollection = dataBase.collection('cars')
