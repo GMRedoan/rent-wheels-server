@@ -116,6 +116,26 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/role/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await usersCollection.findOne(query)
+            res.send(result)
+        })
+
+        // update the user information
+        app.patch('/users/:id', async (req, res) => {
+            const id = req.params.id
+            const updatedUser = req.body
+            const query = { _id: new ObjectId(id) }
+            const update = {
+                $set: updatedUser
+            }
+            const result = await usersCollection.updateOne(query, update)
+            res.send(result)
+        })
+
+
         app.post('/users', async (req, res) => {
             const newUser = req.body
             const email = req.body.email
@@ -130,6 +150,16 @@ async function run() {
             }
         })
 
+        // update user info
+        app.patch('/role/:email', async (req, res) => {
+            const email = req.params.email;
+            const updatedData = req.body;
+            const result = await usersCollection.updateOne(
+                { email },
+                { $set: updatedData }
+            );
+            res.send(result);
+        });
 
 
         // await client.db("admin").command({ ping: 1 });
